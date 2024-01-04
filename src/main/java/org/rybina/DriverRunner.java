@@ -23,23 +23,24 @@ public class DriverRunner {
 
         //language=PostgreSQL
         String sql3 = """
-                select * from aircraft
+                select * from aircraft  where id = ?
                 """;
 
         try(Connection con = ConnectionManager.open();
-            Statement statement = con.createStatement()
         ) {
             System.out.println(con.getTransactionIsolation());
 
-//            method execute преймущественно используется для ddl операций, но вообще его можно использовать повсеместно
+            PreparedStatement statement = con.prepareStatement(sql1);
 
-            Boolean result1 = statement.execute(sql1);
+            Boolean result1 = statement.execute();
             System.out.println(result1);
 
-//            method executeUpdate используется для dml запросов, !КОТОРЫЕ НИЧЕГО НЕ ВОЗВРАЩАЮТ!
-            Integer result2 = statement.executeUpdate(sql2);
+            statement = con.prepareStatement(sql2);
+            Integer result2 = statement.executeUpdate();
 
-            ResultSet result3 = statement.executeQuery(sql3);
+            statement = con.prepareStatement(sql3);
+            statement.setLong(1, 1);
+            ResultSet result3 = statement.executeQuery();
             while (result3.next()) {
                 System.out.println(result3.getString("model"));
             }
