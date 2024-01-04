@@ -31,6 +31,9 @@ public class DriverRunner {
             System.out.println(con.getTransactionIsolation());
 
             PreparedStatement statement = con.prepareStatement(sql1);
+            statement.setFetchSize(20);
+            statement.setQueryTimeout(10);
+            statement.setMaxRows(100);
 
             Boolean result1 = statement.execute();
             System.out.println(result1);
