@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class ConnectionManager {
-    public static String PASSWORD = "aqwsde322";
-    public static String USERNAME = "postgres";
-    public static String URL = "jdbc:postgresql://localhost:5432/jdbc-course";
+    public static String PASSWORD = "db.password";
+    public static String USERNAME = "db.username";
+    public static String URL = "db.url";
 
     private ConnectionManager() {
     }
@@ -27,7 +27,7 @@ public final class ConnectionManager {
     public static Connection open() {
         try {
             return DriverManager
-                    .getConnection(URL, USERNAME, PASSWORD);
+                    .getConnection(PropertiesUtil.get(URL), PropertiesUtil.get(USERNAME), PropertiesUtil.get(PASSWORD));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
