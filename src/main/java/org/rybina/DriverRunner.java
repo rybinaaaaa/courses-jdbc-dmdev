@@ -4,7 +4,10 @@ package org.rybina;
 import org.postgresql.Driver;
 import util.ConnectionManager;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DriverRunner {
     public static void main(String[] args) throws SQLException {
@@ -26,10 +29,15 @@ public class DriverRunner {
                 select * from aircraft  where id = ?
                 """;
 
-        try(Connection con = ConnectionManager.open();
+        try (Connection con = ConnectionManager.open();
         ) {
             System.out.println(con.getTransactionIsolation());
 
+            /**
+             * setFetchSize(int rows): Этот метод устанавливает количество строк, которые должны быть извлечены из базы данных при выполнении запроса. Значение 20 означает, что при каждом обращении к базе данных для извлечения данных, JDBC пытается получить 20 строк за один раз. Это может улучшить производительность за счет снижения количества обращений к базе данных, особенно при обработке больших объемов данных. Но важно выбрать размер, который не будет слишком нагружать память.
+             * setQueryTimeout(int seconds): Этот метод устанавливает максимальное время ожидания для выполнения запроса. Значение 10 означает, что если запрос не завершится в течение 10 секунд, то будет выброшено исключение SQLException. Это полезно для предотвращения зависания программы из-за долго выполняющихся запросов.
+             * setMaxRows(int max): Устанавливает ограничение на максимальное количество строк, которые могут быть обработаны в результате запроса. Значение 100 означает, что запрос вернет не более 100 строк, даже если в базе данных удовлетворяют условиям запроса больше строк. Это может быть полезно для ограничения объема данных, получаемых из базы данных, особенно при работе с очень большими наборами данных.
+             */
             PreparedStatement statement = con.prepareStatement(sql1);
             statement.setFetchSize(20);
             statement.setQueryTimeout(10);
