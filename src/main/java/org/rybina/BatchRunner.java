@@ -25,6 +25,7 @@ public class BatchRunner {
             batchStatement.addBatch(deleteFlightSql);
 
             batchStatement.executeBatch();
+            connection.commit();
         } catch (Exception e) {
             if (connection != null) {
                 connection.rollback();

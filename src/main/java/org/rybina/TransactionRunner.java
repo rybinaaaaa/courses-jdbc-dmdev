@@ -33,6 +33,7 @@ public class TransactionRunner {
             }
 
             deleteFlightStatement.executeUpdate();
+            connection.commit();
         } catch (Exception e) {
             if (connection != null) {
                 connection.rollback();
