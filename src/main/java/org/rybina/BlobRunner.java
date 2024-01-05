@@ -1,6 +1,7 @@
 package org.rybina;
 
 import util.ConnectionManager;
+import util.ConnectionPool;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ public class BlobRunner {
                 select image from aircraft where id = ?
                 """;
 
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = ConnectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ) {
             preparedStatement.setInt(1, 1);
@@ -38,7 +39,7 @@ public class BlobRunner {
         String sql = """
                 update aircraft set image = ? where id = 1
                 """;
-        try (Connection connection = ConnectionManager.open()) {
+        try (Connection connection = ConnectionPool.get()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
 //            ПОСТГРЕС НЕ ПОДДЕРЖИВАЕТ БЛОБ И КЛОБ

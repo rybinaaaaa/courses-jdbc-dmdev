@@ -3,6 +3,7 @@ package org.rybina;
 
 import org.postgresql.Driver;
 import util.ConnectionManager;
+import util.ConnectionPool;
 
 import java.sql.*;
 
@@ -26,7 +27,7 @@ public class DriverRunner {
                 select * from aircraft  where id = ?
                 """;
 
-        try (Connection con = ConnectionManager.open();
+        try (Connection con = ConnectionPool.get();
         ) {
             System.out.println(con.getTransactionIsolation());
 

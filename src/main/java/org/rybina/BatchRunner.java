@@ -1,6 +1,7 @@
 package org.rybina;
 
 import util.ConnectionManager;
+import util.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class BatchRunner {
         Connection connection = null;
         Statement batchStatement = null;
         try {
-            connection = ConnectionManager.open();
+            connection = ConnectionPool.get();
 
 //            ВАЖНО setAutoCommit(false), чтобы указать, что мы делаем в рамках одной транзакции
             connection.setAutoCommit(false);

@@ -1,6 +1,7 @@
 package org.rybina;
 
 import util.ConnectionManager;
+import util.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +17,7 @@ public class TransactionRunner {
         PreparedStatement deleteFlightStatement = null;
         PreparedStatement deleteTicketStatement = null;
         try {
-            connection = ConnectionManager.open();
+            connection = ConnectionPool.get();
 
 //            ВАЖНО setAutoCommit(false), чтобы указать, что мы делаем в рамках одной транзакции
             connection.setAutoCommit(false);

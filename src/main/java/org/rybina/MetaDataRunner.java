@@ -1,6 +1,7 @@
 package org.rybina;
 
 import util.ConnectionManager;
+import util.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -15,7 +16,7 @@ public class MetaDataRunner {
      * данных. В Java, DatabaseMetaData предоставляет способы для извлечения этой информации.
      */
     private static void checkMetaData() {
-        try (Connection connection = ConnectionManager.open()) {
+        try (Connection connection = ConnectionPool.get()) {
             DatabaseMetaData metaData = connection.getMetaData();
 
 //          -------------------------------------------------
