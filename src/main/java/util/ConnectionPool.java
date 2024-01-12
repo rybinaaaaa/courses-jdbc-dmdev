@@ -5,6 +5,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -15,7 +16,7 @@ public final class ConnectionPool {
     public static String URL = "db.url";
     public static String SIZE = "db.pool.size";
     private static BlockingQueue<Connection> pool;
-    private static List<Connection> sourceConnections;
+    private static List<Connection> sourceConnections = new ArrayList<>();
 
     private ConnectionPool() {
     }
