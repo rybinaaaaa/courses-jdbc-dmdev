@@ -1,4 +1,4 @@
-package util;
+package org.rybina.util;
 
 
 import java.lang.reflect.Proxy;

@@ -1,7 +1,6 @@
 package org.rybina;
 
-import util.ConnectionManager;
-import util.ConnectionPool;
+import org.rybina.util.ConnectionPool;
 
 import java.io.IOException;
 import java.nio.file.Files;

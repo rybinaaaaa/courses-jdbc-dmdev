@@ -2,8 +2,7 @@ package org.rybina;
 
 
 import org.postgresql.Driver;
-import util.ConnectionManager;
-import util.ConnectionPool;
+import org.rybina.util.ConnectionPool;
 
 import java.sql.*;
 
