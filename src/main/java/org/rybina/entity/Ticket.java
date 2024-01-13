@@ -68,6 +68,9 @@ public class Ticket {
         this.cost = cost;
     }
 
+    public Ticket() {
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +
