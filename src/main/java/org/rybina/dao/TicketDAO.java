@@ -16,6 +16,9 @@ import static java.util.stream.Collectors.joining;
 // ДАО должны из себя представлять singletone
 public class TicketDAO implements Dao<Long, Ticket> {
     private static final TicketDAO INSTANCE = new TicketDAO();
+
+    private static final FlightDao flightDao = FlightDao.getInstance();
+
     private static final String DELETE_SQL = """
             delete from ticket
             where id = ?
@@ -38,16 +41,8 @@ public class TicketDAO implements Dao<Long, Ticket> {
                         passenger_name,
                         flight_id,
                         seat_no,
-                        cost,
-                        f.status,
-                        f.aircraft_id,
-                        f.arrival_airport_code,
-                        f.arrival_date,
-                        f.departure_airport_code,
-                        f.departure_date,
-                        f.flight_no
+                        cost
                         from ticket
-                        left join flight f on f.id = ticket.flight_id
             """;
 
 
@@ -156,24 +151,25 @@ public class TicketDAO implements Dao<Long, Ticket> {
                 resultSet.getLong("id"),
                 resultSet.getString("passenger_no"),
                 resultSet.getString("passenger_name"),
-                buildFlight(resultSet),
+//                Оптимизируем, чтобы использовать одно подключение
+                flightDao.getById(resultSet.getLong("flight_id"), resultSet.getStatement().getConnection()),
                 resultSet.getString("seat_no"),
                 resultSet.getBigDecimal("cost")
         );
     }
 
-    public static Flight buildFlight(ResultSet resultSet) throws SQLException {
-        return new Flight(
-                resultSet.getLong("flight_id"),
-                resultSet.getString("flight_no"),
-                resultSet.getTimestamp("departure_date").toLocalDateTime(),
-                resultSet.getString("departure_airport_code"),
-                resultSet.getTimestamp("arrival_date").toLocalDateTime(),
-                resultSet.getString("arrival_airport_code"),
-                resultSet.getInt("aircraft_id"),
-                resultSet.getString("status")
-        );
-    }
+//    public static Flight buildFlight(ResultSet resultSet) throws SQLException {
+//        return new Flight(
+//                resultSet.getLong("flight_id"),
+//                resultSet.getString("flight_no"),
+//                resultSet.getTimestamp("departure_date").toLocalDateTime(),
+//                resultSet.getString("departure_airport_code"),
+//                resultSet.getTimestamp("arrival_date").toLocalDateTime(),
+//                resultSet.getString("arrival_airport_code"),
+//                resultSet.getInt("aircraft_id"),
+//                resultSet.getString("status")
+//        );
+//    }
 
     public List<Ticket> findAll(TicketFilter ticketFilter) {
         List<Object> parameters = new ArrayList<>();
