@@ -48,7 +48,7 @@ public class DaoRunner {
         Ticket ticket = new Ticket();
         ticket.setPassengerNo("123");
         ticket.setPassengerName("Test");
-        ticket.setFlightId(3L);
+        ticket.setFlight(3L);
         ticket.setSeatNo("B3");
         ticket.setCost(BigDecimal.TEN);
 
