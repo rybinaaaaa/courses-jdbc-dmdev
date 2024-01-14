@@ -1,5 +1,6 @@
 package org.rybina.dao;
 
+import org.rybina.dto.TicketFilter;
 import org.rybina.entity.Ticket;
 import org.rybina.exception.DaoException;
 import org.rybina.util.ConnectionPool;
@@ -7,7 +8,11 @@ import org.rybina.util.ConnectionPool;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 // ДАО должны из себя представлять singletone
 public class TicketDAO {
@@ -33,6 +38,11 @@ public class TicketDAO {
 
     private static final String FIND_ALL_SQL = """
             select id, passenger_no, passenger_name, flight_id, seat_no, cost from ticket
+            """;
+
+    private static final String FIND_ALL_WITH_PAG_SQL = """
+            select id, passenger_no, passenger_name, flight_id, seat_no, cost from ticket
+            limit ? offset ?
             """;
 
     private TicketDAO() {
@@ -136,5 +146,48 @@ public class TicketDAO {
                 resultSet.getString("seat_no"),
                 resultSet.getBigDecimal("cost")
         );
+    }
+
+    public List<Ticket> findAll(TicketFilter ticketFilter) {
+        List<Object> parameters = new ArrayList<>();
+
+        List<String> whereSql = new ArrayList<>();
+        if (ticketFilter.seatNo() != null) {
+            whereSql.add("seat_no like ?");
+            parameters.add("%" + ticketFilter.seatNo() + "%");
+        }
+        if (ticketFilter.passengerName() != null) {
+            whereSql.add("passenger_name like ?");
+            parameters.add(ticketFilter.passengerName());
+        }
+
+        parameters.add(ticketFilter.limit());
+        parameters.add(ticketFilter.offset());
+
+        String where;
+        if (whereSql.isEmpty()) {
+            where = whereSql.stream().collect(joining(" AND ", "", " LIMIT ? OFFSET ?"));
+        } else {
+            where = whereSql.stream().collect(joining(" AND ", " WHERE ", " LIMIT ? OFFSET ?"));
+        }
+        String sql = FIND_ALL_SQL + where ;
+
+        try (Connection connection = ConnectionPool.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            for (int i = 0; i < parameters.size(); i++) {
+                preparedStatement.setObject(i + 1, parameters.get(i));
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Ticket> tickets = new ArrayList<>();
+
+            while (resultSet.next()) {
+                tickets.add(buildTicket(resultSet));
+            }
+            return tickets;
+        } catch (SQLException e) {
+             throw new RuntimeException(e);
+        }
     }
 }

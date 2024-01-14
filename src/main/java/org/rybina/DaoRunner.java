@@ -1,6 +1,7 @@
 package org.rybina;
 
 import org.rybina.dao.TicketDAO;
+import org.rybina.dto.TicketFilter;
 import org.rybina.entity.Ticket;
 
 import java.math.BigDecimal;
@@ -8,7 +9,14 @@ import java.util.Optional;
 
 public class DaoRunner {
     public static void main(String[] args) {
-        findAllTest();
+        findAllWithParametersTest();
+    }
+
+    private static void findAllWithParametersTest() {
+        TicketDAO ticketDAO = TicketDAO.getInstance();
+        ticketDAO.findAll(new TicketFilter(2, 1, null, null)).forEach(System.out::println);
+        System.out.println("----");
+        ticketDAO.findAll(new TicketFilter(20, 0, "A1", null)).forEach(System.out::println);
     }
 
     private static void findAllTest() {
